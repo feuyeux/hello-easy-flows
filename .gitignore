@@ -5,6 +5,8 @@ target/
 
 .vscode/
 .idea/
+*.ipr
+*.iws
 
 ### Mac OS ###
 .DS_Store
