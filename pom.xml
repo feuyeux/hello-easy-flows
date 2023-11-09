@@ -13,6 +13,7 @@
       <version>0.3</version>
     </dependency>
 
+    <!-- log4j2 via slf4j -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-slf4j-impl</artifactId>
@@ -31,6 +32,7 @@
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
       <version>5.10.0</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
