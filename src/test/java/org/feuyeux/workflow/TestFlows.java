@@ -44,6 +44,7 @@ public class TestFlows {
                         buildSequentialFlow(
                                 cWork,
                                 buildParallelFlow(
+                                        buildSequentialFlow(bWork, eWork),
                                         eWork,
                                         fWork),
                                 gWork),
