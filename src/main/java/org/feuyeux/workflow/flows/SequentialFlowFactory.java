@@ -1,18 +1,18 @@
 package org.feuyeux.workflow.flows;
 
-import org.feuyeux.workflow.works.PrintMessageWork;
+import org.jeasy.flows.work.Work;
 import org.jeasy.flows.workflow.SequentialFlow;
 
 public class SequentialFlowFactory {
     static String flowName = "sequential flow";
 
-    public static SequentialFlow buildSequentialFlow(PrintMessageWork work1, PrintMessageWork work2, PrintMessageWork work3) {
-
-        return SequentialFlow.Builder.aNewSequentialFlow()
+    public static SequentialFlow buildSequentialFlow(Work... works) {
+        SequentialFlow.Builder.ThenStep thenStep = SequentialFlow.Builder.aNewSequentialFlow()
                 .named(flowName)
-                .execute(work1)
-                .then(work2)
-                .then(work3)
-                .build();
+                .execute(works[0]);
+        for (int i = 1; i < works.length; i++) {
+            thenStep = thenStep.then(works[i]);
+        }
+        return thenStep.build();
     }
 }

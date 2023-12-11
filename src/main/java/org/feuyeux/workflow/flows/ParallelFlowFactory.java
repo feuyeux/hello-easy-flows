@@ -1,15 +1,17 @@
 package org.feuyeux.workflow.flows;
 
-import org.feuyeux.workflow.works.PrintMessageWork;
+import org.jeasy.flows.work.Work;
 import org.jeasy.flows.workflow.ParallelFlow;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ParallelFlowFactory {
+    private static final ExecutorService executorService = Executors.newFixedThreadPool(30);
 
-    public static ParallelFlow buildParallelFlow(PrintMessageWork work1, PrintMessageWork work2, PrintMessageWork work3, ExecutorService executorService) {
+    public static ParallelFlow buildParallelFlow(Work... works) {
         return ParallelFlow.Builder.aNewParallelFlow()
-                .execute(work1, work2, work3)
+                .execute(works)
                 .with(executorService)
                 .build();
     }
