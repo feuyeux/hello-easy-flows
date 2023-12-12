@@ -1,7 +1,8 @@
 package org.feuyeux.workflow;
 
 import lombok.extern.slf4j.Slf4j;
-import org.jeasy.flows.work.Work;
+import org.feuyeux.workflow.dag.TreeNode;
+import org.feuyeux.workflow.works.ZeroWork;
 import org.jeasy.flows.work.WorkContext;
 import org.jeasy.flows.work.WorkReport;
 import org.jeasy.flows.workflow.*;
@@ -12,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.List;
 import java.util.Map;
 
+import static org.feuyeux.workflow.dag.FlowBuilder.buildFlow;
 import static org.feuyeux.workflow.flows.ConditionalFlowFactory.buildConditionalFlow;
 import static org.feuyeux.workflow.flows.ParallelFlowFactory.buildParallelFlow;
 import static org.feuyeux.workflow.flows.RepeatFlowFactory.buildRepeatFlow;
@@ -22,19 +24,46 @@ import static org.feuyeux.workflow.flows.SequentialFlowFactory.buildSequentialFl
 public class TestFlows {
 
     @Autowired
-    Map<String, Work> works;
+    Map<String, ZeroWork> works;
     WorkContext workContext = new WorkContext();
 
     @Test
     public void testDAG() {
-        Work aWork = works.get("AWork");
-        Work bWork = works.get("BWork");
-        Work cWork = works.get("CWork");
-        Work dWork = works.get("DWork");
-        Work eWork = works.get("EWork");
-        Work fWork = works.get("FWork");
-        Work gWork = works.get("GWork");
-        Work hWork = works.get("HWork");
+        TreeNode aNode =new TreeNode( works.get("AWork"));
+        TreeNode bNode =new TreeNode( works.get("BWork"));
+        TreeNode cNode =new TreeNode( works.get("CWork"));
+        TreeNode dNode =new TreeNode( works.get("DWork"));
+        TreeNode eNode =new TreeNode( works.get("EWork"));
+        TreeNode fNode =new TreeNode( works.get("FWork"));
+        TreeNode gNode =new TreeNode( works.get("GWork"));
+        TreeNode hNode = new TreeNode(works.get("HWork"));
+        gNode.addChildren(hNode);
+        dNode.addChildren(hNode);
+        eNode.addChildren(gNode);
+        fNode.addChildren(gNode);
+        bNode.addChildren(eNode);
+        cNode.addChildren(eNode);
+        cNode.addChildren(fNode);
+        aNode.addChildren(bNode);
+        aNode.addChildren(cNode);
+        aNode.addChildren(dNode);
+        aNode.addChildren(bNode);
+        workContext.put("hi", "hola");
+        SequentialFlow sequentialFlow = buildFlow(aNode);
+        WorkReport workReport = sequentialFlow.execute(workContext);
+        log.info("latest flow status:{}", workReport.getStatus());
+    }
+
+    @Test
+    public void testDAG0() {
+        ZeroWork aWork = works.get("AWork");
+        ZeroWork bWork = works.get("BWork");
+        ZeroWork cWork = works.get("CWork");
+        ZeroWork dWork = works.get("DWork");
+        ZeroWork eWork = works.get("EWork");
+        ZeroWork fWork = works.get("FWork");
+        ZeroWork gWork = works.get("GWork");
+        ZeroWork hWork = works.get("HWork");
         workContext.put("hi", "hola");
         workContext.put("hello", "");
         SequentialFlow sequentialFlow = buildSequentialFlow(
@@ -57,9 +86,9 @@ public class TestFlows {
     @Test
     public void test() {
 
-        Work aWork = works.get("AWork");
-        Work bWork = works.get("BWork");
-        Work cWork = works.get("CWork");
+        ZeroWork aWork = works.get("AWork");
+        ZeroWork bWork = works.get("BWork");
+        ZeroWork cWork = works.get("CWork");
 
         ConditionalFlow conditionalFlow = buildConditionalFlow(aWork, bWork, cWork);
         SequentialFlow sequentialFlow = buildSequentialFlow(aWork, bWork, cWork);
