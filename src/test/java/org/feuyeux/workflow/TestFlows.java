@@ -29,26 +29,32 @@ public class TestFlows {
 
     @Test
     public void testDAG() {
-        TreeNode aNode =new TreeNode( works.get("AWork"));
-        TreeNode bNode =new TreeNode( works.get("BWork"));
-        TreeNode cNode =new TreeNode( works.get("CWork"));
-        TreeNode dNode =new TreeNode( works.get("DWork"));
-        TreeNode eNode =new TreeNode( works.get("EWork"));
-        TreeNode fNode =new TreeNode( works.get("FWork"));
-        TreeNode gNode =new TreeNode( works.get("GWork"));
+        TreeNode aNode = new TreeNode(works.get("AWork"));
+        TreeNode bNode = new TreeNode(works.get("BWork"));
+        TreeNode cNode = new TreeNode(works.get("CWork"));
+        TreeNode dNode = new TreeNode(works.get("DWork"));
+        TreeNode eNode = new TreeNode(works.get("EWork"));
+        TreeNode fNode = new TreeNode(works.get("FWork"));
+        TreeNode gNode = new TreeNode(works.get("GWork"));
         TreeNode hNode = new TreeNode(works.get("HWork"));
-        gNode.addChildren(hNode);
-        dNode.addChildren(hNode);
+        TreeNode iNode = new TreeNode( works.get("IWork"));
+        workContext.put("ALWAYS_SUCCESS", "Y");
+
+        gNode.addChildren(iNode);
+        hNode.addChildren(iNode);
+        //
         eNode.addChildren(gNode);
         fNode.addChildren(gNode);
+        eNode.addChildren(hNode);
+        //
         bNode.addChildren(eNode);
-        cNode.addChildren(eNode);
-        cNode.addChildren(fNode);
-        aNode.addChildren(bNode);
+        bNode.addChildren(fNode);
+        //
+        cNode.addChildren(gNode);
+        //
         aNode.addChildren(cNode);
-        aNode.addChildren(dNode);
         aNode.addChildren(bNode);
-        workContext.put("hi", "hola");
+
         SequentialFlow sequentialFlow = buildFlow(aNode);
         WorkReport workReport = sequentialFlow.execute(workContext);
         log.info("latest flow status:{}", workReport.getStatus());
@@ -64,21 +70,29 @@ public class TestFlows {
         ZeroWork fWork = works.get("FWork");
         ZeroWork gWork = works.get("GWork");
         ZeroWork hWork = works.get("HWork");
-        workContext.put("hi", "hola");
+        ZeroWork iWork = works.get("IWork");
+
+        workContext.put("ALWAYS_SUCCESS", "Y");
         workContext.put("hello", "");
         SequentialFlow sequentialFlow = buildSequentialFlow(
                 aWork,
                 buildParallelFlow(
-                        bWork,
                         buildSequentialFlow(
-                                cWork,
+                                bWork,
                                 buildParallelFlow(
-                                        buildSequentialFlow(bWork, eWork),
-                                        eWork,
-                                        fWork),
-                                gWork),
-                        dWork),
-                hWork);
+                                        buildSequentialFlow(
+                                                eWork,
+                                                buildParallelFlow(
+                                                        hWork,
+                                                        gWork
+                                                )
+                                        ),
+                                        fWork
+                                )
+                        ),
+                        cWork),
+                iWork
+        );
         WorkReport workReport = sequentialFlow.execute(workContext);
         log.info("latest flow status:{}", workReport.getStatus());
     }

@@ -16,7 +16,7 @@ public class TreeNode {
         this.zeroWork = zeroWork;
     }
 
-    public void addChildren(ZeroWork ... works) {
+    public void addChildren(ZeroWork... works) {
         for (ZeroWork work : works) {
             TreeNode child = new TreeNode(work);
             child.setParent(this);
@@ -24,10 +24,29 @@ public class TreeNode {
         }
     }
 
-    public void addChildren(TreeNode ... nodes) {
+    public void addChildren(TreeNode... nodes) {
         for (TreeNode node : nodes) {
             node.setParent(this);
             children.add(node);
         }
+    }
+
+    @Override
+    public String toString() {
+        return zeroWork.getName();
+    }
+
+    @Override
+    public int hashCode() {
+        return zeroWork.getName().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof TreeNode) {
+            TreeNode node = (TreeNode) obj;
+            return zeroWork.getName().equals(node.getZeroWork().getName());
+        }
+        return false;
     }
 }

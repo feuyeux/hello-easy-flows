@@ -16,8 +16,22 @@ public abstract class ZeroWork implements Work {
     }
 
     protected boolean isSuccess(WorkContext workContext) {
-        return "hola".equals(workContext.get("hi")) || random.nextBoolean();
+        return "Y".equals(workContext.get("ALWAYS_SUCCESS")) || random.nextBoolean();
     }
 
     abstract public String getName();
+
+    @Override
+    public String toString() {
+        return getName();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof ZeroWork) {
+            ZeroWork work = (ZeroWork) obj;
+            return getName().equals(work.getName());
+        }
+        return false;
+    }
 }
