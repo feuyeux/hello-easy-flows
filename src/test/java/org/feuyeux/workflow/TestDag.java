@@ -38,7 +38,7 @@ public class TestDag {
     }
 
     @Test
-    public void testDAG() {
+    public void test() {
         if (sequentialFlow != null) {
             WorkReport workReport = sequentialFlow.execute(workContext);
             log.info("latest flow status:{}", workReport.getStatus());

@@ -13,7 +13,6 @@ import java.util.Random;
 @Slf4j
 @Service("E")
 public class EWork extends ZeroWork {
-    private Random random;
 
     @PostConstruct
     public void init() {
