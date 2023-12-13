@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.Random;
 
 @Slf4j
-@Service("IWork")
+@Service("I")
 public class IWork extends ZeroWork {
     private Random random;
 

@@ -1,0 +1,18 @@
+workflow:
+  components:
+    - name: A
+      dependency:
+    - name: B
+      dependency: A
+    - name: C
+      dependency: A
+    - name: E
+      dependency: B
+    - name: F
+      dependency: B
+    - name: G
+      dependency: E,F,C
+    - name: H
+      dependency: E
+    - name: I
+      dependency: G,H

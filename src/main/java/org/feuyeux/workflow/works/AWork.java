@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.Random;
 
 @Slf4j
-@Service("AWork")
+@Service("A")
 public class AWork extends ZeroWork {
 
     @PostConstruct
@@ -31,7 +31,7 @@ public class AWork extends ZeroWork {
             status = WorkStatus.FAILED;
         }
         log.info("{}:{}", getName(), status);
-        
+
         return new DefaultWorkReport(status, workContext);
     }
 }

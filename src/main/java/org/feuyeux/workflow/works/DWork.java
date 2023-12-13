@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.Random;
 
 @Slf4j
-@Service("DWork")
+@Service("D")
 public class DWork extends ZeroWork {
     private Random random;
 
@@ -32,7 +32,7 @@ public class DWork extends ZeroWork {
             status = WorkStatus.FAILED;
         }
         log.info("{}:{}", getName(), status);
-        
+
         return new DefaultWorkReport(status, workContext);
     }
 }
