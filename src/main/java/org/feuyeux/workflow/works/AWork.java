@@ -22,16 +22,4 @@ public class AWork extends ZeroWork {
     public String getName() {
         return "AWork";
     }
-
-    public WorkReport execute(WorkContext workContext) {
-        WorkStatus status;
-        if (isSuccess(workContext)) {
-            status = WorkStatus.COMPLETED;
-        } else {
-            status = WorkStatus.FAILED;
-        }
-        log.info("{}:{}", getName(), status);
-
-        return new DefaultWorkReport(status, workContext);
-    }
 }

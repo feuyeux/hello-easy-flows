@@ -1,12 +1,24 @@
 package org.feuyeux.workflow.works;
 
-import org.jeasy.flows.work.Work;
-import org.jeasy.flows.work.WorkContext;
+import lombok.extern.slf4j.Slf4j;
+import org.jeasy.flows.work.*;
 
 import java.util.Random;
-
+@Slf4j
 public abstract class ZeroWork implements Work {
     protected Random random;
+
+    public WorkReport execute(WorkContext workContext) {
+        WorkStatus status;
+        if (isSuccess(workContext)) {
+            status = WorkStatus.COMPLETED;
+        } else {
+            status = WorkStatus.FAILED;
+        }
+        Object id = workContext.get("request_id");
+        log.info("{} {}:{}", id == null ? "" : id, getName(), status);
+        return new DefaultWorkReport(status, workContext);
+    }
 
     protected String getHello(WorkContext workContext) {
         String hello = (String) workContext.get("hello");
