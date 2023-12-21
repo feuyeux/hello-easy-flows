@@ -1,11 +1,11 @@
 package org.feuyeux.workflow.config;
 
-import lombok.Data;
-
 import java.util.List;
+import lombok.Data;
 
 @Data
 public class ComponentConfig {
-    private String name;
-    private List<String> dependency;
+
+  private String name;
+  private List<String> dependency;
 }

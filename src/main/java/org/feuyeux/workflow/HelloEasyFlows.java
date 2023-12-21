@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @Slf4j
 public class HelloEasyFlows {
 
-    public static void main(String[] args) {
-        SpringApplication.run(HelloEasyFlows.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(HelloEasyFlows.class, args);
+  }
 }

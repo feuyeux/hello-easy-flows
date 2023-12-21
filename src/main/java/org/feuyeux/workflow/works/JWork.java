@@ -6,8 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Slf4j
-@Service("B")
-public class BWork extends ZeroWork {
+@Service("J")
+public class JWork extends ZeroWork {
 
   @PostConstruct
   public void init() {
@@ -15,6 +15,6 @@ public class BWork extends ZeroWork {
   }
 
   public String getName() {
-    return "BWork";
+    return "JWork";
   }
 }

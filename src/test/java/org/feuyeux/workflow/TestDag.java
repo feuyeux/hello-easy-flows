@@ -1,7 +1,9 @@
 package org.feuyeux.workflow;
 
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
-import org.feuyeux.workflow.dag.DagBuilder;
+import org.feuyeux.workflow.dag.DagTools;
+import org.feuyeux.workflow.dag.FlowBuilder;
 import org.feuyeux.workflow.dag.TreeNode;
 import org.feuyeux.workflow.works.ZeroWork;
 import org.jeasy.flows.work.WorkContext;
@@ -9,50 +11,68 @@ import org.jeasy.flows.work.WorkReport;
 import org.jeasy.flows.workflow.SequentialFlow;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import static org.feuyeux.workflow.dag.FlowBuilder.buildFlow;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @SpringBootTest
+@ExtendWith(SpringExtension.class)
 @Slf4j
 public class TestDag {
-    @Autowired
-    private Map<String, ZeroWork> works;
-    @Autowired
-    private DagBuilder dagBuilder;
 
-    private SequentialFlow sequentialFlow;
+  @Autowired
+  private Map<String, ZeroWork> workMap;
 
-    private ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
+  private WorkContext workContext = new WorkContext();
+  @BeforeEach
+  public void init() {
+    workContext.put("ALWAYS_SUCCESS", "Y");
+  }
+  @Test
+  public void testDAG() {
+    DagTools.DFS(buildTestDag());
+  }
 
-    @BeforeEach
-    public void init() {
-        TreeNode root = dagBuilder.buildTree();
-        if (root != null) {
-            sequentialFlow = buildFlow(root);
-        }
-    }
+  @Test
+  public void testDagAndFlow() {
+    SequentialFlow sequentialFlow= FlowBuilder.buildFlow(buildTestDag());
+    WorkReport workReport = sequentialFlow.execute(workContext);
+    log.info("Latest status:{}", workReport.getStatus());
+  }
 
-    @Test
-    public void test() {
-        if (sequentialFlow != null) {
-            for (int i = 0; i < 5; i++) {
-                executor.submit(() -> {
-                    WorkContext workContext = new WorkContext();
-                    workContext.put("ALWAYS_SUCCESS", "Y");
-                    workContext.put("request_id", UUID.randomUUID().toString());
-                    WorkReport workReport = sequentialFlow.execute(workContext);
-                    log.info("Latest status:{}", workReport.getStatus());
-                });
-            }
-        } else {
-            log.error("sequentialFlow is null");
-        }
-    }
+  private TreeNode buildTestDag() {
+    TreeNode a = new TreeNode(workMap.get("A"));
+    TreeNode b = new TreeNode(workMap.get("B"));
+    TreeNode c = new TreeNode(workMap.get("C"));
+    TreeNode d = new TreeNode(workMap.get("D"));
+    TreeNode e = new TreeNode(workMap.get("E"));
+    TreeNode f = new TreeNode(workMap.get("F"));
+    TreeNode g = new TreeNode(workMap.get("G"));
+    TreeNode h = new TreeNode(workMap.get("H"));
+    TreeNode j = new TreeNode(workMap.get("J"));
+    TreeNode k = new TreeNode(workMap.get("K"));
+    TreeNode l = new TreeNode(workMap.get("L"));
+    TreeNode m = new TreeNode(workMap.get("M"));
+    TreeNode n = new TreeNode(workMap.get("N"));
+
+    a.addEdge(b);
+    a.addEdge(c);
+    b.addEdge(d);
+    b.addEdge(e);
+    d.addEdge(f);
+    e.addEdge(f);
+    f.addEdge(g);
+    f.addEdge(h);
+    g.addEdge(j);
+    c.addEdge(j);
+    j.addEdge(k);
+    e.addEdge(l);
+    j.addEdge(l);
+    k.addEdge(m);
+    l.addEdge(m);
+    m.addEdge(n);
+    h.addEdge(n);
+    return a;
+  }
 }
