@@ -1,16 +1,10 @@
 package org.feuyeux.workflow.dag;
 
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.feuyeux.workflow.works.ZeroWork;
 import org.feuyeux.workflow.works.Zzz;
+
+import java.util.*;
 
 @Slf4j
 public class DagTools {
@@ -20,6 +14,7 @@ public class DagTools {
     levelDeque.push(new HashSet<>());
     Deque<TreeNode> walkingDeque = new LinkedList<>();
     List<TreeNode> visited = new ArrayList<>();
+    List<TreeNode> levelNodes = new ArrayList<>();
     Map<TreeNode, Integer> degreeMap = new HashMap<>();
 
     // 有个假设，就是DAG的根节点是唯一的
@@ -27,8 +22,9 @@ public class DagTools {
 
     while (!walkingDeque.isEmpty()) {
       node = walkingDeque.pop();
-      ZeroWork zeroWork = node.getZeroWork();
-      if ("Zzz".equals(zeroWork.getName())) {
+      ZeroWork work = node.getZeroWork();
+      if ("Zzz".equals(work.getName())) {
+        levelNodes.clear();
         //为新层级创建数组
         if (!levelDeque.peek().isEmpty()) {
           levelDeque.push(new HashSet<>());
@@ -38,35 +34,43 @@ public class DagTools {
       if (visited.contains(node)) {
         continue;
       }
-
       Integer nodeIns = degreeMap.get(node);
-      if (nodeIns != null && nodeIns > 1) {
-        log.warn("ignore:{} {}", node, nodeIns);
+      if (nodeIns != null && nodeIns > 0) {
+        log.debug("ignore:{} {}", node, nodeIns);
       } else {
+        levelNodes.add(node);
         visited.add(node);
         //当前元素添加到这一层的数组中
-        levelDeque.peek().add(zeroWork);
+        levelDeque.peek().add(work);
       }
       if (!walkingDeque.isEmpty()) {
-        //同层还有元素未处理
+        //同层还有元素未处理 先处理同层元素 自己的子节点元素后续处理
         continue;
       }
-      for (TreeNode child : node.getChildren()) {
-        walkingDeque.push(child);
-        Integer ins = null;
-        try {
-          ins = degreeMap.get(child);
-        } catch (Exception e) {
-          throw new RuntimeException(e);
-        }
-        if (ins == null) {
-          int inDegree = child.getInDegree();
-          degreeMap.put(child, inDegree - 1);
-        } else {
-          degreeMap.put(node, ins - 1);
+
+      //这一层的全部子节点都过一遍
+      for (TreeNode n : levelNodes) {
+        for (TreeNode child : n.getChildren()) {
+          if (!walkingDeque.contains(child)) {
+            walkingDeque.push(child);
+          }
+          Integer ins;
+          try {
+            ins = degreeMap.get(child);
+          } catch (Exception e) {
+            throw new RuntimeException(e);
+          }
+          if (ins == null) {
+            int inDegree = child.getInDegree();
+            degreeMap.put(child, inDegree - 1);
+          } else {
+            degreeMap.put(child, ins - 1);
+          }
         }
       }
+
       walkingDeque.push(new TreeNode(new Zzz()));
+
       // 这一层的数组中如果没有元素就丢弃
       if (levelDeque.peek().isEmpty()) {
         levelDeque.pop();
@@ -75,7 +79,9 @@ public class DagTools {
     if (levelDeque.peek().isEmpty()) {
       levelDeque.pop();
     }
-    log.info("queue:{}", levelDeque);
+
+    Optional<Integer> optional = levelDeque.stream().map(Set::size).reduce(Integer::sum);
+    log.info("queue[levels:{},total:{}]:{}", levelDeque.size(), optional.isPresent() ? optional.get() : "?", levelDeque);
     return levelDeque;
   }
 }

@@ -21,7 +21,7 @@ public abstract class ZeroWork implements Work {
       status = WorkStatus.FAILED;
     }
     Object id = workContext.get("request_id");
-    log.info("{} {}:{}", id == null ? "" : id, getName(), status);
+    log.info("{} {}:{}", id == null ? "" : id, this, status);
     return new DefaultWorkReport(status, workContext);
   }
 
@@ -40,7 +40,7 @@ public abstract class ZeroWork implements Work {
 
   @Override
   public String toString() {
-    return getName();
+    return this.getClass().getSimpleName() + "(" + getName() + ")";
   }
 
   @Override

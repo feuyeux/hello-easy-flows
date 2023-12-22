@@ -45,7 +45,7 @@ public class TreeNode {
     if(zeroWork==null){
       return Zzz;
     }
-    return zeroWork.getName();
+    return zeroWork.toString();
   }
 
   @Override
@@ -53,7 +53,7 @@ public class TreeNode {
     if(zeroWork==null){
       return Zzz.hashCode();
     }
-    return zeroWork.getName().hashCode();
+    return zeroWork.toString().hashCode();
   }
 
   @Override
