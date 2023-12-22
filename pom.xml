@@ -8,13 +8,15 @@
   <version>0.0.1-SNAPSHOT</version>
   <properties>
     <spring-boot.version>3.2.0</spring-boot.version>
+    <easy-flows.version>0.3</easy-flows.version>
+    <junit.version>5.10.0</junit.version>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.jeasy</groupId>
       <artifactId>easy-flows</artifactId>
-      <version>0.3</version>
+      <version>${easy-flows.version}</version>
     </dependency>
 
     <!-- log4j2 via slf4j -->
@@ -47,7 +49,7 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <version>5.10.0</version>
+      <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -56,7 +58,6 @@
       <artifactId>spring-boot-starter-test</artifactId>
       <version>${spring-boot.version}</version>
     </dependency>
-
   </dependencies>
 
   <build>
@@ -75,6 +76,20 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <version>${spring-boot.version}</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.3.0</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase>install</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

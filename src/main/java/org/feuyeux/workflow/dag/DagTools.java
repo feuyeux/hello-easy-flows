@@ -75,7 +75,7 @@ public class DagTools {
     if (levelDeque.peek().isEmpty()) {
       levelDeque.pop();
     }
-    log.info("{}", levelDeque);
+    log.info("queue:{}", levelDeque);
     return levelDeque;
   }
 }
