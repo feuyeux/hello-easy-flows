@@ -11,19 +11,20 @@
 ```sh
 $ mvn test -D test=org.feuyeux.workflow.TestDag#testDagAndFlow
 
-03:15:35.779 [[NWork], [MWork], [KWork, LWork], [JWork], [HWork, GWork], [FWork], [DWork, EWork], [BWork, CWork], [AWork]]
-03:15:35.785  AWork:COMPLETED
-03:15:35.787  BWork:COMPLETED
-03:15:35.787  CWork:COMPLETED
-03:15:35.787  DWork:COMPLETED
-03:15:35.787  EWork:COMPLETED
-03:15:35.788  FWork:COMPLETED
-03:15:35.788  HWork:COMPLETED
-03:15:35.788  GWork:COMPLETED
-03:15:35.788  JWork:COMPLETED
-03:15:35.789  KWork:COMPLETED
-03:15:35.789  LWork:COMPLETED
-03:15:35.789  MWork:COMPLETED
-03:15:35.789  NWork:COMPLETED
-03:15:35.789 Latest status:COMPLETED
+18:15:23.594 queue[levels:9,total:13]:[[NWork(NWork)], [MWork(MWork)], [KWork(KWork), LWork(LWork)], [JWork(JWork)], [HWork(HWork), GWork(GWork)], [FWork(FWork)], [EWork(EWork), DWork(DWork)], [BWork(BWork), CWork(CWork)], [AWork(AWork)]]
+18:15:23.601  AWork(AWork):COMPLETED
+18:15:23.603  CWork(CWork):COMPLETED
+18:15:23.603  BWork(BWork):COMPLETED
+18:15:23.604  EWork(EWork):COMPLETED
+18:15:23.604  DWork(DWork):COMPLETED
+18:15:23.605  FWork(FWork):COMPLETED
+18:15:23.605  HWork(HWork):COMPLETED
+18:15:23.605  GWork(GWork):COMPLETED
+18:15:23.606  JWork(JWork):COMPLETED
+18:15:23.606  KWork(KWork):COMPLETED
+18:15:23.606  LWork(LWork):COMPLETED
+18:15:23.607  MWork(MWork):COMPLETED
+18:15:23.607  NWork(NWork):COMPLETED
+18:15:23.607 Latest status:COMPLETED
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.943 s -- in org.feuyeux.workflow.TestDag
 ```
