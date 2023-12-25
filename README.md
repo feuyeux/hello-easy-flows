@@ -2,11 +2,15 @@
 
 > https://github.com/j-easy/easy-flows
 
-<img src="easy-flows.png" alt="easy-flows" style="width:500px" />
+**template yaml -> dag -> flow**
+
+<img src="doc/easy-flows.png" alt="easy-flows" style="width:500px" />
 
 ## DAG
 
-<img src="hello-easy-flows.png" alt="dag.drawio.png" tyle="width:500px" />
+| YAML                                                                       | DAG  |
+|:---------------------------------------------------------------------------| :----- |
+| <img src="doc/flow.config.png" alt="dag.drawio.png" style="width:500px" /> |   <img src="doc/dag.drawio.png" alt="dag.drawio.png" style="width:500px" />   |
 
 ```sh
 $ mvn test -D test=org.feuyeux.workflow.TestDag#testDagAndFlow

@@ -15,6 +15,6 @@ public class HWork extends ZeroWork {
   }
 
   public String getName() {
-    return "HWork";
+    return "H";
   }
 }

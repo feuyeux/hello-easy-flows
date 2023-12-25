@@ -1,6 +1,5 @@
 package org.feuyeux.workflow;
 
-
 import static org.feuyeux.workflow.flows.ConditionalFlowFactory.buildConditionalFlow;
 import static org.feuyeux.workflow.flows.ParallelFlowFactory.buildParallelFlow;
 import static org.feuyeux.workflow.flows.RepeatFlowFactory.buildRepeatFlow;
@@ -12,11 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.feuyeux.workflow.works.ZeroWork;
 import org.jeasy.flows.work.WorkContext;
 import org.jeasy.flows.work.WorkReport;
-import org.jeasy.flows.workflow.ConditionalFlow;
-import org.jeasy.flows.workflow.ParallelFlow;
-import org.jeasy.flows.workflow.ParallelFlowReport;
-import org.jeasy.flows.workflow.RepeatFlow;
-import org.jeasy.flows.workflow.SequentialFlow;
+import org.jeasy.flows.workflow.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +23,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @Slf4j
 public class TestFlows {
 
-  @Autowired
-  private Map<String, ZeroWork> workMap;
+  @Autowired private Map<String, ZeroWork> workMap;
   private WorkContext workContext = new WorkContext();
 
   @Test

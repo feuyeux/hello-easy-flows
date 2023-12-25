@@ -15,6 +15,6 @@ public class KWork extends org.feuyeux.workflow.works.ZeroWork {
   }
 
   public String getName() {
-    return "KWork";
+    return "K";
   }
 }

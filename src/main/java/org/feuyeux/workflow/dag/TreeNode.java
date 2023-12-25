@@ -1,18 +1,21 @@
 package org.feuyeux.workflow.dag;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.feuyeux.workflow.works.ZeroWork;
 
 @Data
+@Slf4j
 public class TreeNode {
 
   public static final String Zzz = "Zzz";
   private ZeroWork zeroWork;
   private TreeNode parent;
   private int inDegree;
+  private String union;
+  private boolean end;
   private List<TreeNode> children = new ArrayList<>();
 
   public TreeNode(ZeroWork zeroWork) {
@@ -21,6 +24,10 @@ public class TreeNode {
 
   public void addEdge(ZeroWork... works) {
     for (ZeroWork work : works) {
+      if (work == null) {
+        log.error("work is null");
+        continue;
+      }
       TreeNode child = new TreeNode(work);
       child.setParent(this);
       child.addInDegree();
@@ -42,7 +49,7 @@ public class TreeNode {
 
   @Override
   public String toString() {
-    if(zeroWork==null){
+    if (zeroWork == null) {
       return Zzz;
     }
     return zeroWork.toString();
@@ -50,7 +57,7 @@ public class TreeNode {
 
   @Override
   public int hashCode() {
-    if(zeroWork==null){
+    if (zeroWork == null) {
       return Zzz.hashCode();
     }
     return zeroWork.toString().hashCode();

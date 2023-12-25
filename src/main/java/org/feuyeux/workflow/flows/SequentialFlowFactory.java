@@ -8,9 +8,8 @@ public class SequentialFlowFactory {
   static String flowName = "sequential flow";
 
   public static SequentialFlow buildSequentialFlow(Work... workMap) {
-    SequentialFlow.Builder.ThenStep thenStep = SequentialFlow.Builder.aNewSequentialFlow()
-        .named(flowName)
-        .execute(workMap[0]);
+    SequentialFlow.Builder.ThenStep thenStep =
+        SequentialFlow.Builder.aNewSequentialFlow().named(flowName).execute(workMap[0]);
     for (int i = 1; i < workMap.length; i++) {
       thenStep = thenStep.then(workMap[i]);
     }

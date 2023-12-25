@@ -15,6 +15,6 @@ public class AWork extends ZeroWork {
   }
 
   public String getName() {
-    return "AWork";
+    return "A";
   }
 }

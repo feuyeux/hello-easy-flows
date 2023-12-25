@@ -1,16 +1,15 @@
 package org.feuyeux.workflow.dag;
 
+import java.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.feuyeux.workflow.works.ZeroWork;
 import org.feuyeux.workflow.works.Zzz;
 
-import java.util.*;
-
 @Slf4j
 public class DagTools {
 
-  public static Deque<Set<ZeroWork>> DFS(TreeNode node) {
-    Deque<Set<ZeroWork>> levelDeque = new LinkedList<>();
+  public static Deque<Set<TreeNode>> DFS(TreeNode node) {
+    Deque<Set<TreeNode>> levelDeque = new LinkedList<>();
     levelDeque.push(new HashSet<>());
     Deque<TreeNode> walkingDeque = new LinkedList<>();
     List<TreeNode> visited = new ArrayList<>();
@@ -25,7 +24,7 @@ public class DagTools {
       ZeroWork work = node.getZeroWork();
       if ("Zzz".equals(work.getName())) {
         levelNodes.clear();
-        //为新层级创建数组
+        // 为新层级创建数组
         if (!levelDeque.peek().isEmpty()) {
           levelDeque.push(new HashSet<>());
         }
@@ -40,15 +39,15 @@ public class DagTools {
       } else {
         levelNodes.add(node);
         visited.add(node);
-        //当前元素添加到这一层的数组中
-        levelDeque.peek().add(work);
+        // 当前元素添加到这一层的数组中
+        levelDeque.peek().add(node);
       }
       if (!walkingDeque.isEmpty()) {
-        //同层还有元素未处理 先处理同层元素 自己的子节点元素后续处理
+        // 同层还有元素未处理 先处理同层元素 自己的子节点元素后续处理
         continue;
       }
 
-      //这一层的全部子节点都过一遍
+      // 这一层的全部子节点都过一遍
       for (TreeNode n : levelNodes) {
         for (TreeNode child : n.getChildren()) {
           if (!walkingDeque.contains(child)) {
@@ -81,7 +80,11 @@ public class DagTools {
     }
 
     Optional<Integer> optional = levelDeque.stream().map(Set::size).reduce(Integer::sum);
-    log.info("queue[levels:{},total:{}]:{}", levelDeque.size(), optional.isPresent() ? optional.get() : "?", levelDeque);
+    log.info(
+        "queue[levels:{},total:{}]:{}",
+        levelDeque.size(),
+        optional.isPresent() ? optional.get() : "?",
+        levelDeque);
     return levelDeque;
   }
 }

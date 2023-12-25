@@ -10,6 +10,7 @@ import org.feuyeux.workflow.config.ComponentConfig;
 import org.feuyeux.workflow.config.WorkflowConfig;
 import org.feuyeux.workflow.dag.DagBuilder;
 import org.feuyeux.workflow.dag.FlowBuilder;
+import org.feuyeux.workflow.dag.FlowDebugTools;
 import org.feuyeux.workflow.dag.TreeNode;
 import org.feuyeux.workflow.works.ZeroWork;
 import org.jeasy.flows.work.WorkContext;
@@ -27,14 +28,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @Slf4j
 public class TestAll {
 
-  @Autowired
-  private Map<String, ZeroWork> workMap;
-  @Autowired
-  private WorkflowConfig workflowConfig;
+  @Autowired private Map<String, ZeroWork> workMap;
+  @Autowired private WorkflowConfig workflowConfig;
 
   private SequentialFlow sequentialFlow;
 
-  private ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
+  private final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 
   @BeforeEach
   public void init() {
@@ -42,23 +41,27 @@ public class TestAll {
     TreeNode root = DagBuilder.buildTree(components, workMap);
     if (root != null) {
       sequentialFlow = FlowBuilder.buildFlow(root);
+      FlowDebugTools.debug();
     }
   }
 
   @Test
-  public void test() {
+  public void testLoop() {
     if (sequentialFlow != null) {
       for (int i = 0; i < 5; i++) {
-        executor.submit(() -> {
-          WorkContext workContext = new WorkContext();
-          workContext.put("ALWAYS_SUCCESS", "Y");
-          workContext.put("request_id", UUID.randomUUID().toString());
-          WorkReport workReport = sequentialFlow.execute(workContext);
-          log.info("Latest status:{}", workReport.getStatus());
-        });
+        executor.submit(this::testOne);
       }
     } else {
       log.error("sequentialFlow is null");
     }
+  }
+
+  @Test
+  public void testOne() {
+    WorkContext workContext = new WorkContext();
+    workContext.put("ALWAYS_SUCCESS", "Y");
+    workContext.put("request_id", UUID.randomUUID().toString());
+    WorkReport workReport = sequentialFlow.execute(workContext);
+    log.info("Latest status:{}", workReport.getStatus());
   }
 }

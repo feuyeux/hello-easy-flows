@@ -10,8 +10,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class WorkflowConfig {
 
-  /**
-   * 参与运算的组件配置
-   */
+  /** 参与运算的组件配置 */
   private List<ComponentConfig> components;
 }

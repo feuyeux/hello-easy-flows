@@ -2,11 +2,7 @@ package org.feuyeux.workflow.works;
 
 import java.util.Random;
 import lombok.extern.slf4j.Slf4j;
-import org.jeasy.flows.work.DefaultWorkReport;
-import org.jeasy.flows.work.Work;
-import org.jeasy.flows.work.WorkContext;
-import org.jeasy.flows.work.WorkReport;
-import org.jeasy.flows.work.WorkStatus;
+import org.jeasy.flows.work.*;
 
 @Slf4j
 public abstract class ZeroWork implements Work {
@@ -36,7 +32,7 @@ public abstract class ZeroWork implements Work {
     return "Y".equals(workContext.get("ALWAYS_SUCCESS")) || random.nextBoolean();
   }
 
-  abstract public String getName();
+  public abstract String getName();
 
   @Override
   public String toString() {

@@ -19,16 +19,19 @@ public class DagBuilder {
       TreeNode node = new TreeNode(zeroWork);
       nodeMap.put(nodeName, node);
       List<String> dependencies = config.getDependency();
-      //假设只有(唯一的)根节点没有依赖
+      // 假设只有(唯一的)根节点没有依赖
       if (dependencies == null || dependencies.isEmpty()) {
         root = node;
+      } else {
+        log.debug("dependencies:{}", dependencies);
+        for (String dependency : dependencies) {
+          TreeNode treeNode = nodeMap.get(dependency);
+          treeNode.addEdge(node);
+        }
       }
-      for (String dependency : dependencies) {
-        TreeNode treeNode = nodeMap.get(dependency);
-        treeNode.addEdge(node);
-      }
+      node.setUnion(config.getUnion());
+      node.setEnd(config.isEnd());
     }
     return root;
   }
 }
-

@@ -9,20 +9,14 @@ import org.jeasy.flows.workflow.ParallelFlow;
 
 public class ParallelFlowFactory {
 
-  private static final ExecutorService executorService = Executors.newFixedThreadPool(30);
+  public static final ExecutorService executorService = Executors.newFixedThreadPool(30);
 
   public static ParallelFlow buildParallelFlow(Work... workMap) {
-    return ParallelFlow.Builder.aNewParallelFlow()
-        .execute(workMap)
-        .with(executorService)
-        .build();
+    return ParallelFlow.Builder.aNewParallelFlow().execute(workMap).with(executorService).build();
   }
 
   public static ParallelFlow buildParallelFlow(Set<ZeroWork> works0) {
     Work[] workMap = works0.toArray(new Work[0]);
-    return ParallelFlow.Builder.aNewParallelFlow()
-        .execute(workMap)
-        .with(executorService)
-        .build();
+    return ParallelFlow.Builder.aNewParallelFlow().execute(workMap).with(executorService).build();
   }
 }

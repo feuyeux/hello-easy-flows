@@ -6,8 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Slf4j
-@Service("N")
-public class NWork extends ZeroWork {
+@Service("R")
+public class RWork extends ZeroWork {
 
   @PostConstruct
   public void init() {
@@ -15,6 +15,6 @@ public class NWork extends ZeroWork {
   }
 
   public String getName() {
-    return "N";
+    return "R";
   }
 }

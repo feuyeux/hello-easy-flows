@@ -1,3 +1,4 @@
+#工作流配置
 workflow:
   components:
     - name: A
@@ -8,11 +9,36 @@ workflow:
       dependency: A
     - name: E
       dependency: B
-    - name: F
+    - name: D
       dependency: B
+    - name: F
+      dependency: D,E
     - name: G
-      dependency: E,F,C
+      dependency: F
     - name: H
-      dependency: E
+      dependency: F
+      union: H
+    - name: J
+      dependency: H,C
+      union: Hπ
+    - name: L
+      dependency: J,D
+      union: H
     - name: K
-      dependency: G,H
+      dependency: J
+      union: H
+    - name: M
+      dependency: L,K
+      union: H
+    - name: N
+      dependency: M
+      union: H
+    - name: P
+      dependency: N
+      union: H
+    - name: Q
+      dependency: P
+      union: H
+      end: true
+    - name: R
+      dependency: Q,G
