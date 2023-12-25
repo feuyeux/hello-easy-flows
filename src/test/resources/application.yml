@@ -20,7 +20,7 @@ workflow:
       union: H
     - name: J
       dependency: H,C
-      union: Hπ
+      union: H
     - name: L
       dependency: J,D
       union: H
