@@ -1,7 +1,7 @@
 package org.feuyeux.workflow.dag;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.feuyeux.workflow.works.ZeroWork;
@@ -16,7 +16,7 @@ public class TreeNode {
   private int inDegree;
   private String union;
   private boolean end;
-  private List<TreeNode> children = new ArrayList<>();
+  private Set<TreeNode> children = new HashSet<>();
 
   public TreeNode(ZeroWork zeroWork) {
     this.zeroWork = zeroWork;
