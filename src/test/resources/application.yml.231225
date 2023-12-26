@@ -3,13 +3,6 @@ workflow:
   components:
     - name: A
       dependency:
-    - name: S
-      dependency: A
-      union: S
-    - name: T
-      dependency: S
-      union: S
-      end: true
     - name: B
       dependency: A
     - name: C
@@ -31,23 +24,21 @@ workflow:
     - name: L
       dependency: J,D
       union: H
-      end: true
     - name: K
       dependency: J
       union: H
-      end: true
     - name: M
-      dependency: L,K,T
-      union: M
+      dependency: L,K
+      union: H
     - name: N
       dependency: M
-      union: M
+      union: H
     - name: P
       dependency: N
-      union: M
+      union: H
     - name: Q
       dependency: P
-      union: M
+      union: H
       end: true
     - name: R
       dependency: Q,G
