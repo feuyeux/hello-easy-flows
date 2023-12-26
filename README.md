@@ -8,9 +8,9 @@
 
 ## DAG
 
-| YAML                                                                       | DAG  |
-|:---------------------------------------------------------------------------| :----- |
-| <img src="doc/flow.config.png" alt="dag.drawio.png" style="width:500px" /> |   <img src="doc/dag.drawio.png" alt="dag.drawio.png" style="width:500px" />   |
+| YAML                                                                       | DAG                                                                       |
+|:---------------------------------------------------------------------------|:--------------------------------------------------------------------------|
+| <img src="doc/flow.config.png" alt="dag.drawio.png" style="width:500px" /> | <img src="doc/dag.drawio.png" alt="dag.drawio.png" style="width:500px" /> |
 
 ```sh
 $ mvn test -D test=org.feuyeux.workflow.TestDag#testDagAndFlow

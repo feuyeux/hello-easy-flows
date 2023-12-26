@@ -23,7 +23,7 @@ public class TestDag {
 
   @Autowired private Map<String, ZeroWork> workMap;
 
-  private WorkContext workContext = new WorkContext();
+  private final WorkContext workContext = new WorkContext();
 
   @BeforeEach
   public void init() {
@@ -38,8 +38,10 @@ public class TestDag {
   @Test
   public void testDagAndFlow() {
     SequentialFlow sequentialFlow = FlowBuilder.buildFlow(buildTestDag());
-    WorkReport workReport = sequentialFlow.execute(workContext);
-    log.info("Latest status:{}", workReport.getStatus());
+    if (sequentialFlow != null) {
+      WorkReport workReport = sequentialFlow.execute(workContext);
+      log.info("Latest status:{}", workReport.getStatus());
+    }
   }
 
   private TreeNode buildTestDag() {

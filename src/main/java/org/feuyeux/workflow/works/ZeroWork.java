@@ -41,8 +41,7 @@ public abstract class ZeroWork implements Work {
 
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof ZeroWork) {
-      ZeroWork work = (ZeroWork) obj;
+    if (obj instanceof ZeroWork work) {
       return getName().equals(work.getName());
     }
     return false;

@@ -24,7 +24,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 public class TestFlows {
 
   @Autowired private Map<String, ZeroWork> workMap;
-  private WorkContext workContext = new WorkContext();
+  private final WorkContext workContext = new WorkContext();
 
   @Test
   public void test() {

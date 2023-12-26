@@ -65,8 +65,7 @@ public class TreeNode {
 
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof TreeNode) {
-      TreeNode node = (TreeNode) obj;
+    if (obj instanceof TreeNode node) {
       return zeroWork.getName().equals(node.getZeroWork().getName());
     }
     return false;

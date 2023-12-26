@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.IntStream;
 import lombok.extern.slf4j.Slf4j;
 import org.feuyeux.workflow.config.ComponentConfig;
 import org.feuyeux.workflow.config.WorkflowConfig;
@@ -14,7 +15,6 @@ import org.feuyeux.workflow.dag.FlowDebugTools;
 import org.feuyeux.workflow.dag.TreeNode;
 import org.feuyeux.workflow.works.ZeroWork;
 import org.jeasy.flows.work.WorkContext;
-import org.jeasy.flows.work.WorkReport;
 import org.jeasy.flows.workflow.SequentialFlow;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,9 +48,7 @@ public class TestAll {
   @Test
   public void testLoop() {
     if (sequentialFlow != null) {
-      for (int i = 0; i < 5; i++) {
-        executor.submit(this::testOne);
-      }
+      IntStream.range(0, 5).forEach(i -> executor.submit(this::testOne));
     } else {
       log.error("sequentialFlow is null");
     }
@@ -61,7 +59,6 @@ public class TestAll {
     WorkContext workContext = new WorkContext();
     workContext.put("ALWAYS_SUCCESS", "Y");
     workContext.put("request_id", UUID.randomUUID().toString());
-    WorkReport workReport = sequentialFlow.execute(workContext);
-    log.info("Latest status:{}", workReport.getStatus());
+    sequentialFlow.execute(workContext);
   }
 }

@@ -22,10 +22,10 @@ public class DagTools {
     while (!walkingDeque.isEmpty()) {
       node = walkingDeque.pop();
       ZeroWork work = node.getZeroWork();
-      if ("Zzz".equals(work.getName())) {
+      if (TreeNode.Zzz.equals(work.getName())) {
         levelNodes.clear();
         // 为新层级创建数组
-        if (!levelDeque.peek().isEmpty()) {
+        if (levelDeque.peek() != null && !levelDeque.peek().isEmpty()) {
           levelDeque.push(new HashSet<>());
         }
         continue;
@@ -40,7 +40,9 @@ public class DagTools {
         levelNodes.add(node);
         visited.add(node);
         // 当前元素添加到这一层的数组中
-        levelDeque.peek().add(node);
+        if (levelDeque.peek() != null) {
+          levelDeque.peek().add(node);
+        }
       }
       if (!walkingDeque.isEmpty()) {
         // 同层还有元素未处理 先处理同层元素 自己的子节点元素后续处理
@@ -71,11 +73,11 @@ public class DagTools {
       walkingDeque.push(new TreeNode(new Zzz()));
 
       // 这一层的数组中如果没有元素就丢弃
-      if (levelDeque.peek().isEmpty()) {
+      if (levelDeque.peek() != null && levelDeque.peek().isEmpty()) {
         levelDeque.pop();
       }
     }
-    if (levelDeque.peek().isEmpty()) {
+    if (levelDeque.peek() != null && levelDeque.peek().isEmpty()) {
       levelDeque.pop();
     }
 
