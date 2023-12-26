@@ -10,7 +10,7 @@
 
 | YAML                                                                       | DAG                                                                       |
 |:---------------------------------------------------------------------------|:--------------------------------------------------------------------------|
-| <src/test/resources/application.yml><br/><src/test/resources/application.yml.231225> | <img src="doc/dag.drawio.png" alt="dag.drawio.png" style="width:500px" /> |
+| [dag config](src/test/resources/application.yml)<br/>[dag config old](src/test/resources/application.yml.231225) | <img src="doc/dag.drawio.png" alt="dag.drawio.png" style="width:500px" /> |
 
 ```sh
 $ mvn test -D test=org.feuyeux.workflow.TestDag#testDagAndFlow
