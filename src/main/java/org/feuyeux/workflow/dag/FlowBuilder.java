@@ -1,5 +1,7 @@
 package org.feuyeux.workflow.dag;
 
+import static org.feuyeux.workflow.dag.NodeType.*;
+
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -10,29 +12,61 @@ import org.jeasy.flows.workflow.SequentialFlow;
 
 @Slf4j
 public class FlowBuilder {
-  private static final List<TreeNode> visitedList = new ArrayList<>();
+  private static final List<WorkFlowNode> visits = new ArrayList<>();
   private static final Map<String, SequentialFlow.Builder.ThenStep> stepMap = new HashMap<>();
 
-  public static SequentialFlow buildFlow(TreeNode node) {
-    visitedList.clear();
+  public static SequentialFlow buildFlow(WorkFlowNode node) {
+    visits.clear();
     stepMap.clear();
-    Map<Integer, Set<TreeNode>> levelMap = buildLevelSet(node);
+    Map<Integer, Set<WorkFlowNode>> levelMap = buildLevelSet(node);
     if (levelMap.isEmpty()) {
       return null;
     }
-    return buildFlow(node, node.getUnion(), levelMap, 0, 0);
+    SequentialFlow flow = buildFlow(node, node.getUnion(), levelMap, 0);
+    if (log.isInfoEnabled()) {
+      StringBuilder flows = new StringBuilder();
+      for (WorkFlowNode visit : visits) {
+        switch (visit.getType()) {
+          case ROOT:
+            flows.append("[<").append(visit).append("> ");
+            break;
+          case PARALLEL:
+            if (visit.isEnd()) {
+              flows.append("|").append(visit).append("|] ");
+            } else {
+              flows.append("|").append(visit).append("| ");
+            }
+            break;
+          case SEQUENTIAL:
+            if (visit.isEnd()) {
+              flows.append("<").append(visit).append(">] ");
+            } else {
+              flows.append("<").append(visit).append("> ");
+            }
+            break;
+          default:
+            break;
+        }
+      }
+      log.info("dag flow[total:{}]:\n{}", visits.size(), flows);
+    }
+    return flow;
   }
 
   private static SequentialFlow buildFlow(
-      TreeNode node, String unionContext, Map<Integer, Set<TreeNode>> levelMap, int x0, int y0) {
+      WorkFlowNode node, String unionContext, Map<Integer, Set<WorkFlowNode>> levelMap, int x0) {
     SequentialFlow.Builder.NameStep nameStep = SequentialFlow.Builder.aNewSequentialFlow();
     SequentialFlow.Builder.ExecuteStep executeStep = nameStep.named("sequential-flow-" + genId());
     SequentialFlow.Builder.ThenStep rootStep = getRootStep(unionContext);
     int x = levelMap.keySet().size();
     for (int i = x0; i < x; i++) {
-      Set<TreeNode> levelNodes = levelMap.get(i);
+      Set<WorkFlowNode> levelNodes = levelMap.get(i);
       if (rootStep == null) {
         if (isSame(node.getUnion(), unionContext)) {
+          if (visits.contains(node)) {
+            continue;
+          }
+          visits.add(node.setType(ROOT));
           ZeroWork zeroWork = node.getZeroWork();
           rootStep = executeStep.execute(zeroWork);
           setRootStep(unionContext, rootStep);
@@ -42,18 +76,19 @@ public class FlowBuilder {
         }
       } else {
         if (levelNodes.size() == 1) {
-          Optional<TreeNode> optional = levelNodes.stream().filter(Objects::nonNull).findFirst();
+          Optional<WorkFlowNode> optional =
+              levelNodes.stream().filter(Objects::nonNull).findFirst();
           if (optional.isPresent()) {
-            TreeNode currentNode = optional.get();
-            if (visitedList.contains(currentNode)) {
+            WorkFlowNode currentNode = optional.get();
+            if (visits.contains(currentNode)) {
               continue;
             }
-            visitedList.add(currentNode);
             if (isSame(currentNode.getUnion(), unionContext)) {
               String nodeUnion = currentNode.getUnion();
               if (nodeUnion != null && !nodeUnion.equals(unionContext)) {
-                rootStep.then(buildFlow(currentNode, nodeUnion, levelMap, i, 0));
+                rootStep.then(buildFlow(currentNode, nodeUnion, levelMap, i));
               } else {
+                visits.add(currentNode.setType(SEQUENTIAL));
                 rootStep.then(currentNode.getZeroWork());
               }
               if (currentNode.isEnd()) {
@@ -62,19 +97,29 @@ public class FlowBuilder {
             }
           }
         } else {
-          List<String> unionList = levelNodes.stream().map(TreeNode::getUnion).toList();
+          List<String> unionList = levelNodes.stream().map(WorkFlowNode::getUnion).toList();
           boolean noUnion = unionList.stream().allMatch(Objects::isNull);
           boolean oneUnion = unionList.stream().distinct().count() == 1;
           Set<ZeroWork> zeroWorks =
-              levelNodes.stream().map(TreeNode::getZeroWork).collect(Collectors.toSet());
+              levelNodes.stream().map(WorkFlowNode::getZeroWork).collect(Collectors.toSet());
           if (noUnion || oneUnion) {
-            if (visitedList.contains(levelNodes.iterator().next())) {
+            boolean hasVisited =
+                levelNodes.stream()
+                    .map(
+                        n -> {
+                          if (visits.contains(n)) {
+                            return false;
+                          }
+                          visits.add(n.setType(PARALLEL));
+                          return true;
+                        })
+                    .anyMatch(f -> !f);
+            if (hasVisited) {
               continue;
             }
-            visitedList.addAll(levelNodes);
             ParallelFlow parallelFlow = ParallelFlowFactory.buildParallelFlow(zeroWorks);
             rootStep.then(parallelFlow);
-            if (levelNodes.stream().anyMatch(TreeNode::isEnd)) {
+            if (levelNodes.stream().anyMatch(WorkFlowNode::isEnd)) {
               break;
             }
           } else {
@@ -83,21 +128,20 @@ public class FlowBuilder {
                 pNameStep.named("parallel-flow-" + genId());
             ParallelFlow.Builder.WithStep pWithStep = null;
             int y = levelNodes.size();
-            List<TreeNode> nodeList = levelNodes.stream().toList();
+            List<WorkFlowNode> nodeList = levelNodes.stream().toList();
             long count = 0;
-            for (int j = y0; j < y; j++) {
-              TreeNode levelNode = nodeList.get(j);
+            for (int j = 0; j < y; j++) {
+              WorkFlowNode levelNode = nodeList.get(j);
               if (isSame(levelNode.getUnion(), unionContext)) {
-                if (visitedList.contains(levelNode)) {
+                if (visits.contains(levelNode)) {
                   continue;
                 }
-                visitedList.add(levelNode);
                 String levelNodeUnion = levelNode.getUnion();
                 if (levelNodeUnion != null && !levelNodeUnion.equals(unionContext)) {
-                  SequentialFlow sequentialFlow =
-                      buildFlow(levelNode, levelNodeUnion, levelMap, i, j);
+                  SequentialFlow sequentialFlow = buildFlow(levelNode, levelNodeUnion, levelMap, i);
                   pWithStep = pExecuteStep.execute(sequentialFlow);
                 } else {
+                  visits.add(levelNode.setType(PARALLEL));
                   pWithStep = pExecuteStep.execute(levelNode.getZeroWork());
                 }
                 if (levelNode.isEnd()) {
@@ -146,14 +190,14 @@ public class FlowBuilder {
     }
   }
 
-  private static Map<Integer, Set<TreeNode>> buildLevelSet(TreeNode node) {
-    Map<Integer, Set<TreeNode>> levelMap = new HashMap<>();
-    Deque<Set<TreeNode>> levelDeque = DagTools.DFS(node);
+  private static Map<Integer, Set<WorkFlowNode>> buildLevelSet(WorkFlowNode node) {
+    Map<Integer, Set<WorkFlowNode>> levelMap = new HashMap<>();
+    Deque<Set<WorkFlowNode>> levelDeque = DagTools.DFS(node);
     int index = levelDeque.size() - 1;
-    for (Set<TreeNode> workNodes : levelDeque) {
-      Set<TreeNode> zeroWorks = new HashSet<>();
+    for (Set<WorkFlowNode> workNodes : levelDeque) {
+      Set<WorkFlowNode> zeroWorks = new HashSet<>();
       boolean flag = false;
-      for (TreeNode zeroWork : workNodes) {
+      for (WorkFlowNode zeroWork : workNodes) {
         // 如果当前节点已经存在于某个level中，则将当前level的所有节点加入到该level中
         Optional<Integer> existInLevel =
             levelMap.entrySet().stream()

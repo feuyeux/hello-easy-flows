@@ -8,13 +8,13 @@ import org.feuyeux.workflow.works.Zzz;
 @Slf4j
 public class DagTools {
 
-  public static Deque<Set<TreeNode>> DFS(TreeNode node) {
-    Deque<Set<TreeNode>> levelDeque = new LinkedList<>();
+  public static Deque<Set<WorkFlowNode>> DFS(WorkFlowNode node) {
+    Deque<Set<WorkFlowNode>> levelDeque = new LinkedList<>();
     levelDeque.push(new HashSet<>());
-    Deque<TreeNode> walkingDeque = new LinkedList<>();
-    List<TreeNode> visited = new ArrayList<>();
-    List<TreeNode> levelNodes = new ArrayList<>();
-    Map<TreeNode, Integer> degreeMap = new HashMap<>();
+    Deque<WorkFlowNode> walkingDeque = new LinkedList<>();
+    List<WorkFlowNode> visited = new ArrayList<>();
+    List<WorkFlowNode> levelNodes = new ArrayList<>();
+    Map<WorkFlowNode, Integer> degreeMap = new HashMap<>();
 
     // 有个假设，就是DAG的根节点是唯一的
     walkingDeque.add(node);
@@ -22,7 +22,7 @@ public class DagTools {
     while (!walkingDeque.isEmpty()) {
       node = walkingDeque.pop();
       ZeroWork work = node.getZeroWork();
-      if (TreeNode.Zzz.equals(work.getName())) {
+      if (WorkFlowNode.Zzz.equals(work.getName())) {
         levelNodes.clear();
         // 为新层级创建数组
         if (levelDeque.peek() != null && !levelDeque.peek().isEmpty()) {
@@ -50,8 +50,8 @@ public class DagTools {
       }
 
       // 这一层的全部子节点都过一遍
-      for (TreeNode n : levelNodes) {
-        for (TreeNode child : n.getChildren()) {
+      for (WorkFlowNode n : levelNodes) {
+        for (WorkFlowNode child : n.getChildren()) {
           if (!walkingDeque.contains(child)) {
             walkingDeque.push(child);
           }
@@ -70,7 +70,7 @@ public class DagTools {
         }
       }
 
-      walkingDeque.push(new TreeNode(new Zzz()));
+      walkingDeque.push(new WorkFlowNode(new Zzz()));
 
       // 这一层的数组中如果没有元素就丢弃
       if (levelDeque.peek() != null && levelDeque.peek().isEmpty()) {
@@ -80,13 +80,14 @@ public class DagTools {
     if (levelDeque.peek() != null && levelDeque.peek().isEmpty()) {
       levelDeque.pop();
     }
-
-    Optional<Integer> optional = levelDeque.stream().map(Set::size).reduce(Integer::sum);
-    log.info(
-        "queue[levels:{},total:{}]:{}",
-        levelDeque.size(),
-        optional.isPresent() ? optional.get() : "?",
-        levelDeque);
+    if (log.isInfoEnabled()) {
+      Optional<Integer> optional = levelDeque.stream().map(Set::size).reduce(Integer::sum);
+      log.info(
+          "dag queue[levels:{},total:{}]:\n{}",
+          levelDeque.size(),
+          optional.isPresent() ? optional.get() : "?",
+          levelDeque);
+    }
     return levelDeque;
   }
 }

@@ -10,13 +10,14 @@ import org.feuyeux.workflow.works.ZeroWork;
 @Slf4j
 public class DagBuilder {
 
-  public static TreeNode buildTree(List<ComponentConfig> configs, Map<String, ZeroWork> workMap) {
-    Map<String, TreeNode> nodeMap = new HashMap<>();
-    TreeNode root = null;
+  public static WorkFlowNode buildTree(
+      List<ComponentConfig> configs, Map<String, ZeroWork> workMap) {
+    Map<String, WorkFlowNode> nodeMap = new HashMap<>();
+    WorkFlowNode root = null;
     for (ComponentConfig config : configs) {
       String nodeName = config.getName();
       ZeroWork zeroWork = workMap.get(nodeName);
-      TreeNode node = new TreeNode(zeroWork);
+      WorkFlowNode node = new WorkFlowNode(zeroWork);
       nodeMap.put(nodeName, node);
       List<String> dependencies = config.getDependency();
       // 假设只有(唯一的)根节点没有依赖
@@ -25,8 +26,8 @@ public class DagBuilder {
       } else {
         log.debug("dependencies:{}", dependencies);
         for (String dependency : dependencies) {
-          TreeNode treeNode = nodeMap.get(dependency);
-          treeNode.addEdge(node);
+          WorkFlowNode workFlowNode = nodeMap.get(dependency);
+          workFlowNode.addEdge(node);
         }
       }
       node.setUnion(config.getUnion());

@@ -1,39 +1,8 @@
 # Hello Easy Flows
 
-> <https://github.com/j-easy/easy-flows>
+## TEMPLATE YAML -> DAG -> FLOW
 
-**template yaml -> dag -> flow**
-
-<img src="doc/easy-flows.png" alt="easy-flows" style="width:500px" />
-
-## DAG
-
-| YAML                                                                       | DAG                                                                       |
-|:---------------------------------------------------------------------------|:--------------------------------------------------------------------------|
-| [dag config](src/test/resources/application.yml)<br/>[dag config old](src/test/resources/application.yml.231225) | <img src="doc/dag.drawio.png" alt="dag.drawio.png" style="width:500px" /> |
-
-```sh
-$ mvn test -D test=org.feuyeux.workflow.TestDag#testDagAndFlow
-
-18:15:23.594 queue[levels:9,total:13]:[[NWork(NWork)], [MWork(MWork)], [KWork(KWork), LWork(LWork)], [JWork(JWork)], [HWork(HWork), GWork(GWork)], [FWork(FWork)], [EWork(EWork), DWork(DWork)], [BWork(BWork), CWork(CWork)], [AWork(AWork)]]
-18:15:23.601  AWork(AWork):COMPLETED
-18:15:23.603  CWork(CWork):COMPLETED
-18:15:23.603  BWork(BWork):COMPLETED
-18:15:23.604  EWork(EWork):COMPLETED
-18:15:23.604  DWork(DWork):COMPLETED
-18:15:23.605  FWork(FWork):COMPLETED
-18:15:23.605  HWork(HWork):COMPLETED
-18:15:23.605  GWork(GWork):COMPLETED
-18:15:23.606  JWork(JWork):COMPLETED
-18:15:23.606  KWork(KWork):COMPLETED
-18:15:23.606  LWork(LWork):COMPLETED
-18:15:23.607  MWork(MWork):COMPLETED
-18:15:23.607  NWork(NWork):COMPLETED
-18:15:23.607 Latest status:COMPLETED
-[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.943 s -- in org.feuyeux.workflow.TestDag
-```
-
-## UT
+### TEMPLATE YAML
 
 ```yaml
 workflow:
@@ -90,26 +59,50 @@ workflow:
       dependency: Q,G
 ```
 
+### DAG
+
+```sh
+dag queue[levels:12,total:18]:
+[[RWork(R)], [QWork(Q)], [PWork(P)], [NWork(N)], [MWork(M)], [LWork(L), KWork(K)], [JWork(J)], [GWork(G), HWork(H)], [FWork(F)], [EWork(E), DWork(D), TWork(T)], [BWork(B), CWork(C), SWork(S)], [AWork(A)]]
+```
+[](doc/dag.drawio.png)
+
+### FLOW
+
+```sh
+dag flow[total:18]:
+[<AWork(A)> |BWork(B)| |CWork(C)| [<SWork(S)> |TWork(T)|] |EWork(E)| |DWork(D)| <FWork(F)> |GWork(G)| [<HWork(H)> <JWork(J)> |LWork(L)|] |KWork(K)|] [<MWork(M)> <NWork(N)> <PWork(P)> <QWork(Q)>] <RWork(R)>
+```
+
+## UT
 ```sh
 $ mvn test -D test=org.feuyeux.workflow.TestAll#testOne
 
-22:45:05.780 queue[levels:12,total:18]:[[RWork(R)], [QWork(Q)], [PWork(P)], [NWork(N)], [MWork(M)], [LWork(L), KWork(K)], [JWork(J)], [GWork(G), HWork(H)], [FWork(F)], [EWork(E), DWork(D), TWork(T)], [BWork(B), CWork(C), SWork(S)], [AWork(A)]]
-22:45:05.789 91474f3c-93e3-4ab6-9897-b31fd387ff7b AWork(A):COMPLETED
-22:45:05.791 91474f3c-93e3-4ab6-9897-b31fd387ff7b BWork(B):COMPLETED
-22:45:05.791 91474f3c-93e3-4ab6-9897-b31fd387ff7b CWork(C):COMPLETED
-22:45:05.791 91474f3c-93e3-4ab6-9897-b31fd387ff7b SWork(S):COMPLETED
-22:45:05.791 91474f3c-93e3-4ab6-9897-b31fd387ff7b TWork(T):COMPLETED
-22:45:05.792 91474f3c-93e3-4ab6-9897-b31fd387ff7b DWork(D):COMPLETED
-22:45:05.792 91474f3c-93e3-4ab6-9897-b31fd387ff7b EWork(E):COMPLETED
-22:45:05.792 91474f3c-93e3-4ab6-9897-b31fd387ff7b FWork(F):COMPLETED
-22:45:05.793 91474f3c-93e3-4ab6-9897-b31fd387ff7b GWork(G):COMPLETED
-22:45:05.793 91474f3c-93e3-4ab6-9897-b31fd387ff7b HWork(H):COMPLETED
-22:45:05.793 91474f3c-93e3-4ab6-9897-b31fd387ff7b JWork(J):COMPLETED
-22:45:05.794 91474f3c-93e3-4ab6-9897-b31fd387ff7b LWork(L):COMPLETED
-22:45:05.794 91474f3c-93e3-4ab6-9897-b31fd387ff7b KWork(K):COMPLETED
-22:45:05.794 91474f3c-93e3-4ab6-9897-b31fd387ff7b MWork(M):COMPLETED
-22:45:05.794 91474f3c-93e3-4ab6-9897-b31fd387ff7b NWork(N):COMPLETED
-22:45:05.794 91474f3c-93e3-4ab6-9897-b31fd387ff7b PWork(P):COMPLETED
-22:45:05.794 91474f3c-93e3-4ab6-9897-b31fd387ff7b QWork(Q):COMPLETED
-22:45:05.794 91474f3c-93e3-4ab6-9897-b31fd387ff7b RWork(R):COMPLETED
+11:25:11.977 dag queue[levels:12,total:18]:
+[[RWork(R)], [QWork(Q)], [PWork(P)], [NWork(N)], [MWork(M)], [LWork(L), KWork(K)], [JWork(J)], [GWork(G), HWork(H)], [FWork(F)], [EWork(E), DWork(D), TWork(T)], [BWork(B), CWork(C), SWork(S)], [AWork(A)]]
+11:25:11.984 dag flow[total:18]:
+[<AWork(A)> |BWork(B)| |CWork(C)| [<SWork(S)> |TWork(T)|] |EWork(E)| |DWork(D)| <FWork(F)> |GWork(G)| [<HWork(H)> <JWork(J)> |LWork(L)|] |KWork(K)|] [<MWork(M)> <NWork(N)> <PWork(P)> <QWork(Q)>] <RWork(R)> 
+11:25:11.987 a8c0a8e3-1b48-4880-b06f-e1ba4216de3d AWork(A):COMPLETED
+11:25:11.988 a8c0a8e3-1b48-4880-b06f-e1ba4216de3d BWork(B):COMPLETED
+11:25:11.989 a8c0a8e3-1b48-4880-b06f-e1ba4216de3d CWork(C):COMPLETED
+11:25:11.989 a8c0a8e3-1b48-4880-b06f-e1ba4216de3d SWork(S):COMPLETED
+11:25:11.989 a8c0a8e3-1b48-4880-b06f-e1ba4216de3d TWork(T):COMPLETED
+11:25:11.990 a8c0a8e3-1b48-4880-b06f-e1ba4216de3d EWork(E):COMPLETED
+11:25:11.990 a8c0a8e3-1b48-4880-b06f-e1ba4216de3d DWork(D):COMPLETED
+11:25:11.990 a8c0a8e3-1b48-4880-b06f-e1ba4216de3d FWork(F):COMPLETED
+11:25:11.991 a8c0a8e3-1b48-4880-b06f-e1ba4216de3d GWork(G):COMPLETED
+11:25:11.991 a8c0a8e3-1b48-4880-b06f-e1ba4216de3d HWork(H):COMPLETED
+11:25:11.991 a8c0a8e3-1b48-4880-b06f-e1ba4216de3d JWork(J):COMPLETED
+11:25:11.992 a8c0a8e3-1b48-4880-b06f-e1ba4216de3d KWork(K):COMPLETED
+11:25:11.992 a8c0a8e3-1b48-4880-b06f-e1ba4216de3d LWork(L):COMPLETED
+11:25:11.992 a8c0a8e3-1b48-4880-b06f-e1ba4216de3d MWork(M):COMPLETED
+11:25:11.992 a8c0a8e3-1b48-4880-b06f-e1ba4216de3d NWork(N):COMPLETED
+11:25:11.992 a8c0a8e3-1b48-4880-b06f-e1ba4216de3d PWork(P):COMPLETED
+11:25:11.992 a8c0a8e3-1b48-4880-b06f-e1ba4216de3d QWork(Q):COMPLETED
+11:25:11.992 a8c0a8e3-1b48-4880-b06f-e1ba4216de3d RWork(R):COMPLETED
 ```
+## Dependence
+
+[j-easy easy-flows](https://github.com/j-easy/easy-flows)
+
+<img src="doc/easy-flows.png" alt="easy-flows" style="width:500px" />

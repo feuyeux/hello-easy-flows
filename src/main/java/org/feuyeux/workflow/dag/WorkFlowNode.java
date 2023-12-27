@@ -3,22 +3,24 @@ package org.feuyeux.workflow.dag;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.Data;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.feuyeux.workflow.works.ZeroWork;
 
 @Data
 @Slf4j
-public class TreeNode {
+public class WorkFlowNode {
 
   public static final String Zzz = "Zzz";
   private ZeroWork zeroWork;
-  private TreeNode parent;
+  private WorkFlowNode parent;
   private int inDegree;
   private String union;
   private boolean end;
-  private Set<TreeNode> children = new HashSet<>();
+  private Set<WorkFlowNode> children = new HashSet<>();
+  @Getter private NodeType type;
 
-  public TreeNode(ZeroWork zeroWork) {
+  public WorkFlowNode(ZeroWork zeroWork) {
     this.zeroWork = zeroWork;
   }
 
@@ -28,7 +30,7 @@ public class TreeNode {
         log.error("work is null");
         continue;
       }
-      TreeNode child = new TreeNode(work);
+      WorkFlowNode child = new WorkFlowNode(work);
       child.setParent(this);
       child.addInDegree();
       children.add(child);
@@ -39,12 +41,17 @@ public class TreeNode {
     inDegree += 1;
   }
 
-  public void addEdge(TreeNode... nodes) {
-    for (TreeNode node : nodes) {
+  public void addEdge(WorkFlowNode... nodes) {
+    for (WorkFlowNode node : nodes) {
       node.setParent(this);
       node.addInDegree();
       children.add(node);
     }
+  }
+
+  public WorkFlowNode setType(NodeType type) {
+    this.type = type;
+    return this;
   }
 
   @Override
@@ -65,7 +72,7 @@ public class TreeNode {
 
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof TreeNode node) {
+    if (obj instanceof WorkFlowNode node) {
       return zeroWork.getName().equals(node.getZeroWork().getName());
     }
     return false;
