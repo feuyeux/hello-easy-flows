@@ -6,7 +6,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.feuyeux.workflow.flows.ParallelFlowFactory;
-import org.feuyeux.workflow.works.ZeroWork;
+import org.feuyeux.workflow.dag.works.ZeroWork;
+import org.jeasy.flows.work.Work;
 import org.jeasy.flows.workflow.ParallelFlow;
 import org.jeasy.flows.workflow.SequentialFlow;
 
@@ -100,7 +101,7 @@ public class FlowBuilder {
           List<String> unionList = levelNodes.stream().map(WorkFlowNode::getUnion).toList();
           boolean noUnion = unionList.stream().allMatch(Objects::isNull);
           boolean oneUnion = unionList.stream().distinct().count() == 1;
-          Set<ZeroWork> zeroWorks =
+          Set<Work> zeroWorks =
               levelNodes.stream().map(WorkFlowNode::getZeroWork).collect(Collectors.toSet());
           if (noUnion || oneUnion) {
             boolean hasVisited =

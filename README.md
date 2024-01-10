@@ -1,6 +1,6 @@
 # Hello Easy Flows
 
-## TEMPLATE YAML -> DAG -> FLOW
+## 1 TEMPLATE YAML -> DAG -> FLOW
 
 ### TEMPLATE YAML
 
@@ -65,6 +65,7 @@ workflow:
 dag queue[levels:12,total:18]:
 [[RWork(R)], [QWork(Q)], [PWork(P)], [NWork(N)], [MWork(M)], [LWork(L), KWork(K)], [JWork(J)], [GWork(G), HWork(H)], [FWork(F)], [EWork(E), DWork(D), TWork(T)], [BWork(B), CWork(C), SWork(S)], [AWork(A)]]
 ```
+
 [](doc/dag.drawio.png)
 
 ### FLOW
@@ -74,9 +75,10 @@ dag flow[total:18]:
 [<AWork(A)> |BWork(B)| |CWork(C)| [<SWork(S)> |TWork(T)|] |EWork(E)| |DWork(D)| <FWork(F)> |GWork(G)| [<HWork(H)> <JWork(J)> |LWork(L)|] |KWork(K)|] [<MWork(M)> <NWork(N)> <PWork(P)> <QWork(Q)>] <RWork(R)>
 ```
 
-## UT
+### UT
+
 ```sh
-$ mvn test -D test=org.feuyeux.workflow.TestAll#testOne
+$ mvn test -D test=org.feuyeux.workflow.dag.TestAll#testOne
 
 11:25:11.977 dag queue[levels:12,total:18]:
 [[RWork(R)], [QWork(Q)], [PWork(P)], [NWork(N)], [MWork(M)], [LWork(L), KWork(K)], [JWork(J)], [GWork(G), HWork(H)], [FWork(F)], [EWork(E), DWork(D), TWork(T)], [BWork(B), CWork(C), SWork(S)], [AWork(A)]]
@@ -101,6 +103,46 @@ $ mvn test -D test=org.feuyeux.workflow.TestAll#testOne
 11:25:11.992 a8c0a8e3-1b48-4880-b06f-e1ba4216de3d QWork(Q):COMPLETED
 11:25:11.992 a8c0a8e3-1b48-4880-b06f-e1ba4216de3d RWork(R):COMPLETED
 ```
+
+## 2 FLOW & CONFIG
+
+```mermaid
+flowchart LR
+A1{{A1}}  & A2(A2)  --> R{WorkStatus}
+R --> |COMPLETED| B{{B}}
+R --> |FAILED| C{{C}}
+```
+
+><https://mermaid.js.org/config/theming.html#theme-variables>
+
+```java
+ConditionalFlow conditionalFlow = ConditionalFlow.Builder.aNewConditionalFlow()
+                .named("conditional_flow")
+                .execute(buildParallelFlow(a1,a2))
+                .when(WorkReportPredicate.COMPLETED)
+                .then(b)
+                .otherwise(c)
+                .build();
+```
+
+```sh
+20:18:21.595 A1 will work 100ms...
+20:18:21.595 A2 will work 1000ms...
+20:18:21.698 A1 COMPLETED
+20:18:22.599 A2 COMPLETED
+20:18:22.600 B will work 200ms...
+20:18:22.805 B COMPLETED
+20:18:22.805 latest flow status:COMPLETED
+20:18:22.805 --------------------
+20:18:22.806 A1 will work 100ms...
+20:18:22.807 A2 will work 1000ms...
+20:18:22.911 A1 COMPLETED
+20:18:23.812 A2 FAILED
+20:18:23.813 C will work 200ms...
+20:18:24.018 C COMPLETED
+20:18:24.018 latest flow status:COMPLETED
+```
+
 ## Dependence
 
 [j-easy easy-flows](https://github.com/j-easy/easy-flows)

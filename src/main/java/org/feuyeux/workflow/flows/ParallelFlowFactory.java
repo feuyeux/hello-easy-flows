@@ -3,7 +3,7 @@ package org.feuyeux.workflow.flows;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import org.feuyeux.workflow.works.ZeroWork;
+import org.feuyeux.workflow.dag.works.ZeroWork;
 import org.jeasy.flows.work.Work;
 import org.jeasy.flows.workflow.ParallelFlow;
 
@@ -15,7 +15,7 @@ public class ParallelFlowFactory {
     return ParallelFlow.Builder.aNewParallelFlow().execute(workMap).with(executorService).build();
   }
 
-  public static ParallelFlow buildParallelFlow(Set<ZeroWork> works0) {
+  public static ParallelFlow buildParallelFlow(Set<Work> works0) {
     Work[] workMap = works0.toArray(new Work[0]);
     return ParallelFlow.Builder.aNewParallelFlow().execute(workMap).with(executorService).build();
   }

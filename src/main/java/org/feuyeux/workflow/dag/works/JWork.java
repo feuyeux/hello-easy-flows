@@ -1,4 +1,4 @@
-package org.feuyeux.workflow.works;
+package org.feuyeux.workflow.dag.works;
 
 import jakarta.annotation.PostConstruct;
 import java.util.Random;

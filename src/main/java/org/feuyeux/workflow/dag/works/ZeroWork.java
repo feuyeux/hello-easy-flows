@@ -1,4 +1,4 @@
-package org.feuyeux.workflow.works;
+package org.feuyeux.workflow.dag.works;
 
 import java.util.Random;
 import lombok.extern.slf4j.Slf4j;

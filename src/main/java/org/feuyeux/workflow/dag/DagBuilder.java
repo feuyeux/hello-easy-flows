@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
-import org.feuyeux.workflow.config.ComponentConfig;
-import org.feuyeux.workflow.works.ZeroWork;
+import org.feuyeux.workflow.dag.config.ComponentConfig;
+import org.feuyeux.workflow.dag.works.ZeroWork;
 
 @Slf4j
 public class DagBuilder {

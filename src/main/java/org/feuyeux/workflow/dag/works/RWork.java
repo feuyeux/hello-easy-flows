@@ -1,4 +1,4 @@
-package org.feuyeux.workflow.works;
+package org.feuyeux.workflow.dag.works;
 
 import jakarta.annotation.PostConstruct;
 import java.util.Random;
@@ -6,8 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Slf4j
-@Service("G")
-public class GWork extends ZeroWork {
+@Service("R")
+public class RWork extends ZeroWork {
 
   @PostConstruct
   public void init() {
@@ -15,6 +15,6 @@ public class GWork extends ZeroWork {
   }
 
   public String getName() {
-    return "G";
+    return "R";
   }
 }

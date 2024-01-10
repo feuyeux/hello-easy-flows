@@ -1,4 +1,4 @@
-package org.feuyeux.workflow.config;
+package org.feuyeux.workflow.dag.config;
 
 import java.util.List;
 import lombok.Data;

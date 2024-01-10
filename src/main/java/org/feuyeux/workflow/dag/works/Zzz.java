@@ -1,4 +1,4 @@
-package org.feuyeux.workflow.works;
+package org.feuyeux.workflow.dag.works;
 
 import org.feuyeux.workflow.dag.WorkFlowNode;
 import org.jeasy.flows.work.WorkContext;

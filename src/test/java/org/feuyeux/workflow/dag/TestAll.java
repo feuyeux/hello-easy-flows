@@ -1,4 +1,4 @@
-package org.feuyeux.workflow;
+package org.feuyeux.workflow.dag;
 
 import java.util.List;
 import java.util.Map;
@@ -8,13 +8,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.IntStream;
 import lombok.extern.slf4j.Slf4j;
-import org.feuyeux.workflow.config.ComponentConfig;
-import org.feuyeux.workflow.config.WorkflowConfig;
-import org.feuyeux.workflow.dag.DagBuilder;
-import org.feuyeux.workflow.dag.FlowBuilder;
-import org.feuyeux.workflow.dag.FlowDebugTools;
-import org.feuyeux.workflow.dag.WorkFlowNode;
-import org.feuyeux.workflow.works.ZeroWork;
+import org.feuyeux.workflow.HelloEasyFlows;
+import org.feuyeux.workflow.dag.config.ComponentConfig;
+import org.feuyeux.workflow.dag.config.WorkflowConfig;
+import org.feuyeux.workflow.dag.works.ZeroWork;
 import org.jeasy.flows.work.WorkContext;
 import org.jeasy.flows.workflow.SequentialFlow;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,7 +43,6 @@ public class TestAll {
     WorkFlowNode root = DagBuilder.buildTree(components, workMap);
     if (root != null) {
       sequentialFlow = FlowBuilder.buildFlow(root);
-      FlowDebugTools.debug();
     }
   }
 

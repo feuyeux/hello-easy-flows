@@ -1,11 +1,9 @@
-package org.feuyeux.workflow;
+package org.feuyeux.workflow.dag;
 
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
-import org.feuyeux.workflow.dag.DagTools;
-import org.feuyeux.workflow.dag.FlowBuilder;
-import org.feuyeux.workflow.dag.WorkFlowNode;
-import org.feuyeux.workflow.works.ZeroWork;
+import org.feuyeux.workflow.HelloEasyFlows;
+import org.feuyeux.workflow.dag.works.ZeroWork;
 import org.jeasy.flows.work.WorkContext;
 import org.jeasy.flows.work.WorkReport;
 import org.jeasy.flows.workflow.SequentialFlow;

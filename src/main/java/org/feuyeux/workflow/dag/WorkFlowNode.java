@@ -5,7 +5,7 @@ import java.util.Set;
 import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.feuyeux.workflow.works.ZeroWork;
+import org.feuyeux.workflow.dag.works.ZeroWork;
 
 @Data
 @Slf4j
@@ -13,7 +13,6 @@ public class WorkFlowNode {
 
   public static final String Zzz = "Zzz";
   private ZeroWork zeroWork;
-  private WorkFlowNode parent;
   private int inDegree;
   private String union;
   private boolean end;
@@ -31,7 +30,6 @@ public class WorkFlowNode {
         continue;
       }
       WorkFlowNode child = new WorkFlowNode(work);
-      child.setParent(this);
       child.addInDegree();
       children.add(child);
     }
@@ -43,7 +41,6 @@ public class WorkFlowNode {
 
   public void addEdge(WorkFlowNode... nodes) {
     for (WorkFlowNode node : nodes) {
-      node.setParent(this);
       node.addInDegree();
       children.add(node);
     }
