@@ -4,7 +4,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class ComponentConfig {
+public class ComponentConfigV1 {
   private String name;
   private String union;
   private boolean end;

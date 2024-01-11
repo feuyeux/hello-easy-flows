@@ -3,7 +3,6 @@ package org.feuyeux.workflow.flows;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import org.feuyeux.workflow.dag.works.ZeroWork;
 import org.jeasy.flows.work.Work;
 import org.jeasy.flows.workflow.ParallelFlow;
 

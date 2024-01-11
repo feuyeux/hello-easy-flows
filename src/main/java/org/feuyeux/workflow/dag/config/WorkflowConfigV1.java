@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "workflow")
 @Data
 @Configuration
-public class WorkflowConfig {
+public class WorkflowConfigV1 {
 
   /** 参与运算的组件配置 */
-  private List<ComponentConfig> components;
+  private List<ComponentConfigV1> components;
 }

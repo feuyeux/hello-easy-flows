@@ -1,8 +1,7 @@
 package org.feuyeux.workflow.condloop.config;
 
-import lombok.Data;
-
 import java.util.List;
+import lombok.Data;
 
 @Data
 public class ComponentConfig {

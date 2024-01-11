@@ -9,8 +9,8 @@ import java.util.concurrent.Executors;
 import java.util.stream.IntStream;
 import lombok.extern.slf4j.Slf4j;
 import org.feuyeux.workflow.HelloEasyFlows;
-import org.feuyeux.workflow.dag.config.ComponentConfig;
-import org.feuyeux.workflow.dag.config.WorkflowConfig;
+import org.feuyeux.workflow.dag.config.ComponentConfigV1;
+import org.feuyeux.workflow.dag.config.WorkflowConfigV1;
 import org.feuyeux.workflow.dag.works.ZeroWork;
 import org.jeasy.flows.work.WorkContext;
 import org.jeasy.flows.workflow.SequentialFlow;
@@ -29,7 +29,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 public class TestAll {
 
   @Autowired private Map<String, ZeroWork> workMap;
-  @Autowired private WorkflowConfig workflowConfig;
+  @Autowired private WorkflowConfigV1 workflowConfigV1;
 
   private SequentialFlow sequentialFlow;
 
@@ -39,7 +39,7 @@ public class TestAll {
 
   @BeforeEach
   public void init() {
-    List<ComponentConfig> components = workflowConfig.getComponents();
+    List<ComponentConfigV1> components = workflowConfigV1.getComponents();
     WorkFlowNode root = DagBuilder.buildTree(components, workMap);
     if (root != null) {
       sequentialFlow = FlowBuilder.buildFlow(root);

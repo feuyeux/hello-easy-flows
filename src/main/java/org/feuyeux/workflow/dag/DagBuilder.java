@@ -4,17 +4,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
-import org.feuyeux.workflow.dag.config.ComponentConfig;
+import org.feuyeux.workflow.dag.config.ComponentConfigV1;
 import org.feuyeux.workflow.dag.works.ZeroWork;
 
 @Slf4j
 public class DagBuilder {
 
   public static WorkFlowNode buildTree(
-      List<ComponentConfig> configs, Map<String, ZeroWork> workMap) {
+      List<ComponentConfigV1> configs, Map<String, ZeroWork> workMap) {
     Map<String, WorkFlowNode> nodeMap = new HashMap<>();
     WorkFlowNode root = null;
-    for (ComponentConfig config : configs) {
+    for (ComponentConfigV1 config : configs) {
       String nodeName = config.getName();
       ZeroWork zeroWork = workMap.get(nodeName);
       WorkFlowNode node = new WorkFlowNode(zeroWork);
