@@ -104,11 +104,13 @@ $ mvn test -D test=org.feuyeux.workflow.dag.TestAll#testOne
 11:25:11.992 a8c0a8e3-1b48-4880-b06f-e1ba4216de3d RWork(R):COMPLETED
 ```
 
-## 2 FLOW & CONFIG
+## 2 FLOWS & CONFIG
+
+### CASE 1 Conditional Flow
 
 ```mermaid
-flowchart LR
-A1{{A1}}  & A2(A2)  --> R{WorkStatus}
+flowchart TD
+A1{{A1}}  & A2(A2)  --> R{Status}
 R --> |COMPLETED| B{{B}}
 R --> |FAILED| C{{C}}
 ```
@@ -133,7 +135,9 @@ ConditionalFlow conditionalFlow = ConditionalFlow.Builder.aNewConditionalFlow()
 20:18:22.600 B will work 200ms...
 20:18:22.805 B COMPLETED
 20:18:22.805 latest flow status:COMPLETED
-20:18:22.805 --------------------
+```
+
+```sh
 20:18:22.806 A1 will work 100ms...
 20:18:22.807 A2 will work 1000ms...
 20:18:22.911 A1 COMPLETED
@@ -141,6 +145,212 @@ ConditionalFlow conditionalFlow = ConditionalFlow.Builder.aNewConditionalFlow()
 20:18:23.813 C will work 200ms...
 20:18:24.018 C COMPLETED
 20:18:24.018 latest flow status:COMPLETED
+```
+
+### CASE 2 Loop Times Flow
+
+```mermaid
+---
+title: WorkerX will repeat always 3 times, whether status is COMPLETED or FAILED.
+---
+flowchart LR
+A{{A}} --> R{times<=3}
+R --> |Yes| A
+R --> |No| End
+```
+
+```java
+@Test
+public void testRepeatUntil() {
+    // given
+    log.info("WorkerX will repeat until the status is FAILED.");
+    Work work = Mockito.mock(TwoStatusWork.class,
+            Mockito.withSettings()
+                    .useConstructor("WorkerX", 1000)
+                    .defaultAnswer(Mockito.CALLS_REAL_METHODS)
+    );
+    RepeatFlow repeatFlow = buildRepeatFlow(work, WorkReportPredicate.COMPLETED);
+    // when
+    WorkReport report = repeatFlow.execute(workContext);
+    // then
+    Mockito.verify(work, Mockito.atLeastOnce()).execute(workContext);
+}
+
+public void testRepeatTimes() {
+    // given
+    int n = 3;
+    log.info("WorkerX will repeat always {} times, whether status is COMPLETED or FAILED.", n);
+    Work work = Mockito.mock(TwoStatusWork.class,
+            Mockito.withSettings()
+                    .useConstructor("WorkerX", 1000)
+                    .defaultAnswer(Mockito.CALLS_REAL_METHODS)
+    );
+    RepeatFlow repeatFlow = buildRepeatFlow(work, n);
+    // when
+    repeatFlow.execute(workContext);
+    // then
+    Mockito.verify(work, Mockito.times(n)).execute(workContext);
+}
+```
+
+```sh
+11:05:46.306 WorkerX will repeat until the status is FAILED.
+11:05:46.523 WorkerX will work 1000ms...
+11:05:47.528 WorkerX COMPLETED
+11:05:47.530 WorkerX will work 1000ms...
+11:05:48.534 WorkerX COMPLETED
+11:05:48.535 WorkerX will work 1000ms...
+11:05:49.539 WorkerX COMPLETED
+11:05:49.540 WorkerX will work 1000ms...
+11:05:50.545 WorkerX FAILED
+```
+
+### CASE 3 Loop Until Failed Flow
+
+```mermaid
+---
+title: WorkerX will repeat until the status is FAILED.
+---
+flowchart LR
+A{{A}} --> R{Status}
+R --> |COMPLETED| A
+R --> |FAILED| End
+```
+
+```java
+public void testRepeatUntil() {
+    // given
+    log.info("WorkerX will repeat until the status is FAILED.");
+    Work work = Mockito.mock(TwoStatusWork.class,
+            Mockito.withSettings()
+                    .useConstructor("WorkerX", 1000)
+                    .defaultAnswer(Mockito.CALLS_REAL_METHODS)
+    );
+    RepeatFlow repeatFlow = buildRepeatFlow(work, WorkReportPredicate.COMPLETED);
+    // when
+   repeatFlow.execute(workContext);
+    // then
+    Mockito.verify(work, Mockito.atLeastOnce()).execute(workContext);
+}
+
+public WorkReport execute(WorkContext workContext) {
+    log.info("{} will work {}ms...", this.name, this.costTime);
+    try {
+        TimeUnit.MILLISECONDS.sleep(costTime);
+    } catch (InterruptedException e) {
+        log.error("{}", e.getMessage());
+    }
+    WorkStatus status;
+    if (random.nextBoolean()) {
+        status = WorkStatus.COMPLETED;
+    } else {
+        status = WorkStatus.FAILED;
+    }
+    log.info("{} {}", this.name, status);
+    return new DefaultWorkReport(status, workContext);
+}
+```
+
+```sh
+10:48:25.485 WorkerX will repeat until the status is FAILED.
+10:48:25.685 WorkerX will work 1000ms...
+10:48:26.691 WorkerX[1] COMPLETED
+10:48:26.695 WorkerX will work 1000ms...
+10:48:27.699 WorkerX[2] COMPLETED
+10:48:27.700 WorkerX will work 1000ms...
+10:48:28.703 WorkerX[3] COMPLETED
+10:48:28.704 WorkerX will work 1000ms...
+10:48:29.709 WorkerX[4] COMPLETED
+10:48:29.710 WorkerX will work 1000ms...
+10:48:30.713 WorkerX[5] FAILED
+```
+
+### CASE 4 Loop Until Failed or Times reached Flow
+
+```mermaid
+---
+title: WorkerX repeat at most 3 times if status is COMPLETED.
+---
+flowchart LR
+A{{A}} --> R1{Status}
+A{{A}} --> R2{times<=3}
+
+R1--> |COMPLETED| A
+R2 --> |Yes| A
+
+R1 --> |FAILED| End
+R2 --> |No| End
+
+```
+
+```java
+public void testRepeatTimesUntil() {
+    // given
+    int n = 3;
+    log.info("WorkerX will repeat at most {} times if status is COMPLETED.", n);
+
+    Work work = Mockito.mock(ThreeStatusWork.class,
+            Mockito.withSettings()
+                    .useConstructor("WorkerX", 1000, n)
+                    .defaultAnswer(Mockito.CALLS_REAL_METHODS)
+    );
+    RepeatFlow repeatFlow = aNewRepeatFlow()
+            .repeat(work)
+            .until(WorkReportPredicate.COMPLETED)
+            .build();
+    // when
+    repeatFlow.execute(workContext);
+    // then
+    Mockito.verify(work, Mockito.atMost(n)).execute(workContext);
+    Mockito.verify(work,Mockito.atLeastOnce()).execute(workContext);
+}
+
+public WorkReport execute(WorkContext workContext) {
+    log.info("{} will work {}ms...", this.name, this.costTime);
+    try {
+        TimeUnit.MILLISECONDS.sleep(costTime);
+    } catch (InterruptedException e) {
+        log.error("{}", e.getMessage());
+    }
+    WorkStatus status;
+    Object ott = workContext.get("times");
+    int tt;
+    if (ott == null) {
+        tt = 1;
+    } else {
+        tt = (int) ott + 1;
+    }
+    workContext.put("times", tt);
+    if (tt >= times) {
+        status = WorkStatus.FAILED;
+    } else {
+        if (random.nextBoolean()) {
+            status = WorkStatus.COMPLETED;
+        } else {
+            status = WorkStatus.FAILED;
+        }
+    }
+    log.info("{}[{}] {}", this.name, tt, status);
+    return new DefaultWorkReport(status, workContext);
+}
+```
+
+```sh
+11:15:13.151 WorkerX will repeat at most 3 times if status is COMPLETED.
+11:15:13.354 WorkerX will work 1000ms...
+11:15:14.361 WorkerX[1] COMPLETED
+11:15:14.364 WorkerX will work 1000ms...
+11:15:15.369 WorkerX[2] COMPLETED
+11:15:15.370 WorkerX will work 1000ms...
+11:15:16.374 WorkerX[3] FAILED
+```
+
+```sh
+11:15:42.190 WorkerX will repeat at most 3 times if status is COMPLETED.
+11:15:42.379 WorkerX will work 1000ms...
+11:15:43.385 WorkerX[1] COMPLETED
+11:15:43.388 WorkerX will work 1000ms...
+11:15:44.393 WorkerX[2] FAILED
 ```
 
 ## Dependence

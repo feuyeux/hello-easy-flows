@@ -1,0 +1,8 @@
+#工作流配置
+workflow:
+  components:
+    - name: A
+      dependency:
+    - name: S
+      dependency: A
+      union: S

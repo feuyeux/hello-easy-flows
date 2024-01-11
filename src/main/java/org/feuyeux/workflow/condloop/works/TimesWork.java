@@ -1,21 +1,20 @@
-package org.feuyeux.workflow.easy;
+package org.feuyeux.workflow.condloop.works;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jeasy.flows.work.*;
 
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-public class TwoStatusWork implements Work {
+public class TimesWork implements Work {
     private final String name;
     private final long costTime;
-    Random random;
+    private final int times;
 
-    public TwoStatusWork(String name, int costTime) {
+    public TimesWork(String name, int costTime, int times) {
         this.name = name;
         this.costTime = costTime;
-        this.random = new Random(costTime ^ System.nanoTime());
+        this.times = times;
     }
 
     @Override
@@ -27,12 +26,20 @@ public class TwoStatusWork implements Work {
             log.error("{}", e.getMessage());
         }
         WorkStatus status;
-        if (random.nextBoolean()) {
+        Object ott = workContext.get("times");
+        int tt;
+        if (ott == null) {
+            tt = 1;
+        } else {
+            tt = (int) ott + 1;
+        }
+        workContext.put("times", tt);
+        if (tt < times) {
             status = WorkStatus.COMPLETED;
         } else {
             status = WorkStatus.FAILED;
         }
-        log.info("{} {}", this.name, status);
+        log.info("{}[{}] {}", this.name, tt, status);
         return new DefaultWorkReport(status, workContext);
     }
 
