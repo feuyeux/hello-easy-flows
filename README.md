@@ -66,7 +66,7 @@ dag queue[levels:12,total:18]:
 [[RWork(R)], [QWork(Q)], [PWork(P)], [NWork(N)], [MWork(M)], [LWork(L), KWork(K)], [JWork(J)], [GWork(G), HWork(H)], [FWork(F)], [EWork(E), DWork(D), TWork(T)], [BWork(B), CWork(C), SWork(S)], [AWork(A)]]
 ```
 
-[](doc/dag.drawio.png)
+![](doc/dag.drawio.png)
 
 ### FLOW
 
@@ -273,7 +273,7 @@ title: WorkerX repeat at most 3 times if status is COMPLETED.
 ---
 flowchart LR
 A{{A}} --> R1{Status}
-A{{A}} --> R2{times<=3}
+A --> R2{times<=3}
 
 R1--> |COMPLETED| A
 R2 --> |Yes| A

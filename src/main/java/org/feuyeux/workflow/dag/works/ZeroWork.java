@@ -9,6 +9,7 @@ public abstract class ZeroWork implements Work {
 
   protected Random random;
 
+  @Override
   public WorkReport execute(WorkContext workContext) {
     WorkStatus status;
     if (isSuccess(workContext)) {
@@ -31,8 +32,6 @@ public abstract class ZeroWork implements Work {
   protected boolean isSuccess(WorkContext workContext) {
     return "Y".equals(workContext.get("ALWAYS_SUCCESS")) || random.nextBoolean();
   }
-
-  public abstract String getName();
 
   @Override
   public String toString() {

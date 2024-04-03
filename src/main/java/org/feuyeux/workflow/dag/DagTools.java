@@ -8,7 +8,7 @@ import org.feuyeux.workflow.dag.works.Zzz;
 @Slf4j
 public class DagTools {
 
-  public static Deque<Set<WorkFlowNode>> DFS(WorkFlowNode node) {
+  public static Deque<Set<WorkFlowNode>> dfs(WorkFlowNode node) {
     Deque<Set<WorkFlowNode>> levelDeque = new LinkedList<>();
     levelDeque.push(new HashSet<>());
     Deque<WorkFlowNode> walkingDeque = new LinkedList<>();

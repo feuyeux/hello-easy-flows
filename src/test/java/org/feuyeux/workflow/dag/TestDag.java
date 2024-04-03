@@ -32,7 +32,7 @@ public class TestDag {
 
   @Test
   public void testDAG() {
-    DagTools.DFS(buildTestDag());
+    DagTools.dfs(buildTestDag());
   }
 
   @Test

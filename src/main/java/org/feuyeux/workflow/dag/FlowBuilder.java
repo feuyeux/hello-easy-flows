@@ -193,7 +193,7 @@ public class FlowBuilder {
 
   private static Map<Integer, Set<WorkFlowNode>> buildLevelSet(WorkFlowNode node) {
     Map<Integer, Set<WorkFlowNode>> levelMap = new HashMap<>();
-    Deque<Set<WorkFlowNode>> levelDeque = DagTools.DFS(node);
+    Deque<Set<WorkFlowNode>> levelDeque = DagTools.dfs(node);
     int index = levelDeque.size() - 1;
     for (Set<WorkFlowNode> workNodes : levelDeque) {
       Set<WorkFlowNode> zeroWorks = new HashSet<>();
